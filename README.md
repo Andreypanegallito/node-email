@@ -292,7 +292,7 @@ export const sendEmailFormContato = async (): Promise<string> => {
     .then(() => {
       return "Ok";
     })
-    .catch((err: any) => {
+    .catch((err: string) => {
       console.error("erro ao enviaro e-mail", err);
       return "erro";
     });
