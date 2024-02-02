@@ -61,6 +61,8 @@ npm install express --save-dev
 
 ## 7º Instalar o cors
 
+Para realizar algumas funcionalidades do projeto também será necessário instalar o cors.
+
 ```
 npm install cors --save-dev
 ```
@@ -102,13 +104,21 @@ app.listen(process.env.PORT, () => {
 });
 ```
 
-## 9º Criando o EmailService para enviar o e-mail
+## 9º Instalar o nodemailer
 
-Eu separei a função de enviar o e-mail para ficar melhor organizado e a compreensão fica melhor.
+Para realizar o envio utilizarei o nodemailer, por isso iremos instalar ele.
+
+```
+npm install nodemailer --save-dev
+```
+
+## 10º Criando o EmailService para enviar o e-mail
+
+Eu separei a função responsável por enviar o e-mail para ficar melhor organizado e a compreensão ficar facilitada.
 
 Estarei mostrando as 3 etapas para fazer
 
-## 10º Importando e configurando o nodemailer
+## 11º Importando e configurando o nodemailer
 
 Para utilizar o nodemailer, temos que importar ele e configurar o nodemailer para que ele possa enviar o e-mail.
 
@@ -142,7 +152,7 @@ const transport = new nodeMailer.createTransport({
 });
 ```
 
-## 11º Criando a função que vai enviar o e-mail
+## 12º Criando a função que vai enviar o e-mail
 
 Nesse caso, eu criei uma função assíncrona, validando se o envio de e-mail vai ser concluído com sucesso, ou se vai ocorrer erros.
 
@@ -159,6 +169,7 @@ export const sendEmailFormContato = async () => {
     text: `Você tem uma nova mensagem! \n Mensagem em text`, // aqui você coloca a mensagem do e-mail em text (quando html não é possivel ser visualizado)
   };
 
+  // Aqui será é chamado a função do nodemailer para enviar o e-mail
   const retorno = await transport
     .sendMail(emailObject)
     .then(() => {
@@ -186,12 +197,13 @@ export const sendEmailFormContato = async (): Promise<string> => {
     text: `Você tem uma nova mensagem! \n Mensagem em text`, // aqui você coloca a mensagem do e-mail em text (quando html não é possivel ser visualizado)
   };
 
+  // Aqui será é chamado a função do nodemailer para enviar o e-mail
   const retorno = await transport
     .sendMail(emailObject)
     .then(() => {
       return "Ok";
     })
-    .catch((err: any) => {
+    .catch((err: string) => {
       console.error("erro ao enviaro e-mail", err);
       return "erro";
     });
@@ -200,9 +212,54 @@ export const sendEmailFormContato = async (): Promise<string> => {
 };
 ```
 
----
+## 13º Código completo
 
 Aqui está o código completo para ficar de melhor visualização.
+
+### Javascript
+
+```
+\\Importando o nodemailer
+const nodeMailer = require("nodemailer");
+
+//Criando as configurações de comunicação do nodemailer
+const transport = new nodeMailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: "email",
+    pass: "senha",
+  },
+});
+
+//
+export const sendEmailFormContato = async () => {
+  // Crie um objeto e-mail
+  const emailObject = {
+    from: "e-mail remetente", //aqui você coloca o e-mail que aparecerá como remetente
+    to: "e-mail de destino", //aqui você coloca o e-mail que será enviado o e-mail
+    subject: `titulo do e-mail`, //aqui você coloca o título do e-mail
+    html: `<h1>Você tem uma nova mensagem! Mensagem em html </h1>`, // aqui você coloca a mensagem do e-mail em html
+    text: `Você tem uma nova mensagem! \n Mensagem em text`, // aqui você coloca a mensagem do e-mail em text (quando html não é possivel ser visualizado)
+  };
+
+  const retorno = await transport
+    .sendMail(emailObject)
+    .then(() => {
+      return "Ok";
+    })
+    .catch((err) => {
+      console.error("erro ao enviaro e-mail", err);
+      return "erro";
+    });
+
+  return retorno;
+};
+
+```
+
+### TypeScript
 
 ```
 \\Importando o nodemailer
@@ -244,5 +301,3 @@ export const sendEmailFormContato = async (): Promise<string> => {
 };
 
 ```
-
----
